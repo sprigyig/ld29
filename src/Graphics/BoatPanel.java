@@ -8,6 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -15,10 +20,19 @@ import javax.swing.Timer;
 public class BoatPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	float vpx, vpy;
-	float zoom;
+	private float vpx, vpy;
+	private float zoom;
+
+	private Map<RenderLayer, Set<WorldRenderable>> renderStuff;
+	private ArrayList<RenderQueueAction> actions;
 
 	public BoatPanel() {
+		renderStuff = new HashMap<RenderLayer, Set<WorldRenderable>>();
+		for (RenderLayer rl : RenderLayer.values()) {
+			renderStuff.put(rl, new HashSet<WorldRenderable>());
+		}
+		actions = new ArrayList<BoatPanel.RenderQueueAction>();
+
 		setBackground(ConstantHacks.seaColor());
 		setDoubleBuffered(true);
 		new Timer(30, new ActionListener() {
@@ -45,7 +59,7 @@ public class BoatPanel extends JPanel {
 
 		float worldWidth = getWidth() / zoomFactor;
 		float worldHeight = getHeight() / zoomFactor;
-		float pixelWidth = worldWidth/getWidth();
+		float pixelWidth = worldWidth / getWidth();
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
@@ -58,8 +72,47 @@ public class BoatPanel extends JPanel {
 		g2.setColor(new Color(255, 254, 255));
 		g2.drawOval(-5, -5, 10, 10);
 
-		new GridLines().paint(vpx, vpy, worldWidth, worldHeight, pixelWidth, g2);
+		synchronized (actions) {
+			for (int i = 0; i < actions.size(); i++) {
+				RenderQueueAction rqa = actions.get(i);
+				if (rqa.add) {
+					renderStuff.get(rqa.layer).add(rqa.wr);
+				} else {
+					renderStuff.get(rqa.layer).remove(rqa.wr);
+				}
+			}
+			actions.clear();
+		}
+
+		for (RenderLayer rl : new RenderLayer[] { RenderLayer.UNDER,
+				RenderLayer.ON, RenderLayer.OVERLAY }) {
+			for (WorldRenderable wr : renderStuff.get(rl)) {
+				wr.paint(vpx, vpy, worldWidth, worldHeight, pixelWidth, g2);
+			}
+		}
 	}
 
+	public void addRenderable(RenderLayer rl, WorldRenderable wr) {
+		synchronized (actions) {
+			actions.add(new RenderQueueAction(rl, true, wr));
+		}
+	}
 
+	public void removeRenderable(RenderLayer rl, WorldRenderable wr) {
+		synchronized (actions) {
+			actions.add(new RenderQueueAction(rl, false, wr));
+		}
+	}
+
+	private static class RenderQueueAction {
+		RenderLayer layer;
+		boolean add;
+		WorldRenderable wr;
+
+		RenderQueueAction(RenderLayer layer, boolean add, WorldRenderable wr) {
+			this.layer = layer;
+			this.add = add;
+			this.wr = wr;
+		}
+	}
 }
