@@ -1,6 +1,5 @@
 package Graphics;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -46,6 +45,7 @@ public class BoatPanel extends JPanel {
 
 		float worldWidth = getWidth() / zoomFactor;
 		float worldHeight = getHeight() / zoomFactor;
+		float pixelWidth = worldWidth/getWidth();
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
@@ -58,32 +58,8 @@ public class BoatPanel extends JPanel {
 		g2.setColor(new Color(255, 254, 255));
 		g2.drawOval(-5, -5, 10, 10);
 
-		drawLines(vpx, vpy, worldWidth, worldHeight, g2);
+		new GridLines().paint(vpx, vpy, worldWidth, worldHeight, pixelWidth, g2);
 	}
 
-	private void drawLines(float cx, float cy, float vpWidth, float vpHeight,
-			Graphics2D g2) {
-		int linePow = (int) Math.round(Math.log(vpWidth) / Math.log(5)-1.1);
-		int lineSpace = (int) Math.pow(5, linePow);
 
-		int xitrs = (int) (vpWidth / lineSpace);
-		int basex = Math.round(cx / lineSpace) * lineSpace;
-
-		int yitrs = (int) (vpHeight / lineSpace);
-		int basey = Math.round(cy / lineSpace) * lineSpace;
-
-		g2.setColor(ConstantHacks.mapLineColor());
-
-		g2.setStroke(new BasicStroke(vpWidth / getWidth()));
-
-		for (int i = -xitrs / 2 - 2; i < xitrs / 2 + 2; i++) {
-			g2.drawLine(basex + i * lineSpace, (int) (cy - vpHeight / 2), basex
-					+ i * lineSpace, (int) (cy + vpHeight / 2));
-		}
-
-		for (int i = -yitrs / 2 - 2; i < yitrs / 2 + 2; i++) {
-			g2.drawLine((int) (cx - vpWidth / 2), basex + i * lineSpace,
-					(int) (cx + vpWidth / 2), (int) (basey + i * lineSpace));
-		}
-	}
 }
