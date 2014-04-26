@@ -2,6 +2,9 @@ package graphics;
 
 import javax.swing.JFrame;
 
+import things.GridLines;
+import things.UserSubmarine;
+
 public class BoatWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 
@@ -18,6 +21,8 @@ public class BoatWindow extends JFrame {
 		new BoatWindow(bp = new BoatPanel());
 
 		GridLines gl = new GridLines();
+		
+		bp.addRenderable(RenderLayer.UNDER, new UserSubmarine());
 		
 		while(true) {
 			Thread.sleep(1000);

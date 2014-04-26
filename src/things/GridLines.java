@@ -1,4 +1,7 @@
-package graphics;
+package things;
+
+import graphics.ConstantHacks;
+import graphics.WorldRenderable;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;

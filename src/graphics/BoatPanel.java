@@ -69,9 +69,6 @@ public class BoatPanel extends JPanel {
 
 		g2.translate(-vpx, -vpy);
 
-		g2.setColor(new Color(255, 254, 255));
-		g2.drawOval(-5, -5, 10, 10);
-
 		synchronized (actions) {
 			for (int i = 0; i < actions.size(); i++) {
 				RenderQueueAction rqa = actions.get(i);
