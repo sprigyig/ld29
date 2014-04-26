@@ -1,6 +1,5 @@
 package graphics;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -63,6 +62,7 @@ public class BoatPanel extends JPanel {
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
 		g2.translate(getWidth() / 2, getHeight() / 2);// center 0,0
 		g2.scale(zoomFactor, -zoomFactor);// -y makes cartesian co-ords

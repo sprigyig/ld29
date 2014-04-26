@@ -1,8 +1,13 @@
 package graphics;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
 import javax.swing.JFrame;
 
 import things.GridLines;
+import things.SpriteRenderer;
 import things.UserSubmarine;
 
 public class BoatWindow extends JFrame {
@@ -24,11 +29,20 @@ public class BoatWindow extends JFrame {
 		
 		bp.addRenderable(RenderLayer.UNDER, new UserSubmarine());
 		
+		BufferedImage bi = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = bi.getGraphics();
+		g.setColor(Color.black);
+		g.drawString("test", 50, 50);
+		
+		SpriteRenderer sr;
+		bp.addRenderable(RenderLayer.ON, sr = new SpriteRenderer(bi, 50, 50));
+		
+		bp.addRenderable(RenderLayer.OVERLAY, gl);
+		
 		while(true) {
-			Thread.sleep(1000);
-			bp.addRenderable(RenderLayer.OVERLAY, gl);
-			Thread.sleep(1000);
-			bp.removeRenderable(RenderLayer.OVERLAY, gl);
+			sr.setRotation((float) (Math.PI*2 * (System.currentTimeMillis()%4000)/4000f));
+			Thread.sleep(30);
+			
 		}
 	}
 }
