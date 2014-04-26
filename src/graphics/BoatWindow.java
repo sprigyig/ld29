@@ -1,4 +1,4 @@
-package Graphics;
+package graphics;
 
 import javax.swing.JFrame;
 
@@ -15,7 +15,7 @@ public class BoatWindow extends JFrame {
 	
 	public static void main(String[] args) throws InterruptedException {
 		BoatPanel bp;
-		BoatWindow bw = new BoatWindow(bp = new BoatPanel());
+		new BoatWindow(bp = new BoatPanel());
 
 		GridLines gl = new GridLines();
 		
